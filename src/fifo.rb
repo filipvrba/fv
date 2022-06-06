@@ -1,12 +1,11 @@
 #!/usr/bin/ruby
+require "./src/project.rb"
 
 class Fifo
-    FILE_NAME = "signal"
-    REL_PATH = "share"
     @abspath = nil
 
-    def initialize
-        @abspath = File.absolute_path(FILE_NAME, REL_PATH)
+    def initialize pid
+        @abspath = get_abspath pid
     end
 
     def create
