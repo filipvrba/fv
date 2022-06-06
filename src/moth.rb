@@ -1,5 +1,7 @@
 require "./src/blackbox.rb"
 
+@blackbox = Blackbox.new
+
 def get_value option
     index = ARGV.index(option) + 1
     ARGV[index]
@@ -13,11 +15,15 @@ def process_argv(option)
         puts ""
         puts "-p, --pid  [pid]     Set pid for a blackbox"
         puts "-n, --name [name]    Set name for orientation a pid"
+        puts "-f, --free [pid]     Remove pid from a blackbox"
         exit
     when "-p", "--pid"
         @options[:pid] = get_value option
     when "-n", "--name"
         @options[:name] = get_value option
+    when "-f", "--free"
+        @blackbox.free (get_value option)
+        exit
     end
 end
 
@@ -26,5 +32,4 @@ ARGV.each do |option|
     process_argv(option)
 end
 
-blackbox = Blackbox.new
-blackbox.add @options[:pid], @options[:name]
+@blackbox.add @options[:pid], @options[:name]
