@@ -1,8 +1,10 @@
 #!/bin/bash
+# http://mywiki.wooledge.org/BashFAQ/100#Removing_part_of_a_string
 
 file=$1
 type="${file##*.}"
-abspath=$(pwd)
+abspath=$(realpath $0)
+abspath=${abspath%/*/*}
 case $type in
 
   lua)

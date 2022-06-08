@@ -1,11 +1,7 @@
-#!/usr/bin/ruby
-require "./src/project.rb"
-
 class Fifo
-    @abspath = nil
 
-    def initialize pid
-        @abspath = get_abspath pid
+    def initialize path_pid
+        @abspath = path_pid
     end
 
     def create
