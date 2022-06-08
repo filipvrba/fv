@@ -1,33 +1,16 @@
 require_relative "./share"
+require_relative "./project"
+require_relative "./app/arguments"
 
-def get_value option
-    index = ARGV.index(option) + 1
-    ARGV[index]
-end
 
-def process_argv(option)
-    case option
-    when "-h", "--help"
-        puts "# FIFO Virtual"
-        puts "Is place for multiple languages program communications."
-        puts ""
-        puts "## Arguments:"
-        puts "    -s, --share    Get a share directory."
-        exit
-    when "-s", "--share"
-        @options[:share] = true
+pid = fork do
+    app_arguments = App::Arguments.new
+    share = Share.new app_arguments.options[:message]
+    share.p_path app_arguments.options[:share]
+
+    while true
+        sleep 1
     end
 end
 
-@options = {}
-ARGV.each do |option|
-    process_argv(option)
-end
-
-share = Share.new
-share.p_path @options[:share]
-
-puts share.get_pid
-while true
-    sleep 1
-end
+p pid
