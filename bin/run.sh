@@ -18,6 +18,9 @@ case $type in
   py)
     python $abspath/src/$file $@
     ;;
+  cr)
+    crystal $abspath/src/$file $@
+    ;;
 
   *)
     echo "Not support this file for an interpreter"

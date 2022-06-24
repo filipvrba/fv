@@ -1,0 +1,14 @@
+class World < Space
+
+  def __init value:
+  end
+end
+
+
+ods = "[x]"
+
+def hello message, lol: # hello
+  f"{ods} Hello {message}"
+end
+
+p hello "filip"
