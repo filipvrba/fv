@@ -1,14 +1,11 @@
-class World < Space
-
-  def __init value:
+class Hello < lol:
+  def __init():
+    "hello in lol"
   end
 end
 
-
-ods = "[x]"
-
-def hello message, lol: # hello
-  f"{ods} Hello {message}"
+def hello message:
+  f"hello {message}"
 end
 
 p hello "filip"

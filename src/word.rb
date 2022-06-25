@@ -1,5 +1,6 @@
 class Word
-  attr_reader :row, :childs
+  attr_reader :row, :childs, :index
+  attr_writer :row
 
   def initialize(word, row, index)
     @word = word
@@ -10,7 +11,7 @@ class Word
 
   def get_name
     s = @row.split(' ')
-    return s.length > 1 ? s[1] : nil
+    return s.length > 1 ? s[1].sub(":", "") : nil
   end
 
   def to_s
