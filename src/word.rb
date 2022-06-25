@@ -11,7 +11,7 @@ class Word
 
   def get_name
     s = @row.split(' ')
-    return s.length > 1 ? s[1].sub(":", "") : nil
+    return s.length > 1 ? s[1].sub(":", "").sub( /([(][^)]*[)])/, "" ): nil
   end
 
   def to_s
