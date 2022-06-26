@@ -16,7 +16,19 @@ class FV
   }
 
   def self.d_def(row, name)
-    self.add_brackets( row, name, Python::WORDS[:e] )
+    row = self.add_brackets( row, name, Python::WORDS[:e] )
+    self.d_special_def( row, name )
+  end
+
+  def self.d_special_def(row, name)
+    is_special = name.index( /^__/ ) && name.each_char
+      .with_object(Hash.new(0)) {|c, m| m[c]+=1}["_"] == 2
+    
+    if is_special
+      row.sub(name, name + "_" * 2)
+    else
+      row
+    end
   end
 
   def self.d_inheritance(row)
