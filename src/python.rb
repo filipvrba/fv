@@ -3,6 +3,9 @@ class Python
     :p => "pass",
     :pr => "print",
     :r => "return",
-    :e => ":"
+    :e => ":",
+    :n => "None",
+    :f => "False",
+    :t => "True"
   }
 end
