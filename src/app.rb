@@ -1,6 +1,7 @@
 require "option_parser"
 require_relative "fv"
 require_relative "word"
+require_relative "helper"
 
 OptionParser.parse do |parser|
   parser.banner( "Usage: fv [options] [program file]\n\nOptions:" )
@@ -23,6 +24,7 @@ end
 File.open(file) do |d|
   @data = d.readlines
 end
+@data[@data.length - 1] += "\n"
 
 fv = FV.new
 fv.find_words(@data)
@@ -41,10 +43,9 @@ def write_words(arr)
       write_row.(FV::d_p(row))
     when FV::WORDS[:e]
       data = @data[word.index - 1]
-      write_row.(FV::d_return(data), 1)
       write_row.(FV::d_end(row, data))
     else
-      write_row.(FV::d_other(row, word.get_name))
+      write_row.(FV::d_other(row, word.to_s))
     end
 
     if word.childs.length > 0
@@ -53,7 +54,20 @@ def write_words(arr)
   end
 end
 
-# fix the same name def and comment
+def add_main()
+  name = FV::METHODS[:m].concat("():")
+  @data.each do |r|
+    if r.include?( name )
+      @data[@data.length - 1] += FV::d_main()
+      break
+    end
+  end
+end
+
 write_words(fv.words)
+add_main()
+
+p_header("Python")
 puts @data
-# puts %x(python -c << END '#{@data.join}' END)
+p_header("App")
+system("python -c << END '#{@data.join}' END")

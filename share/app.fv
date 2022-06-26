@@ -1,11 +1,19 @@
-class Hello < lol:
-  def __init():
-    "hello in lol"
+import signal
+
+class Signals:
+  def __init self:
+    def connect:
+      signal.signal(signal.SIGINT, self.intHandler)
+    end
+
+    connect
+  end
+
+  def intHandler self, signum, frame:
+    p "exit app"
+    exit()
   end
 end
 
-def hello message:
-  f"hello {message}"
-end
-
-p hello "filip"
+signals = Signals
+signal.pause()

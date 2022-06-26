@@ -11,6 +11,10 @@ class FV
     :i => "<"
   }
 
+  METHODS = {
+    :m => "main"
+  }
+
   def self.d_def(row, name)
     self.add_brackets( row, name, Python::WORDS[:e] )
   end
@@ -65,6 +69,10 @@ class FV
     end
   end
 
+  def self.d_main()
+    "\nif __name__ == \"__main__\":\n  main()\n"
+  end
+
   def self.d_other(row, name)
     self.add_brackets( row, name )
   end
@@ -87,7 +95,7 @@ class FV
   def find_words(data)
     data.each_with_index do |row, i|
       FV::WORDS.each do |key, value|
-        if row.include?(value)
+        if row.index( /#{value}[ \n]/ )
           @words.append Word.new(value, row, i)
           break
         end
@@ -97,7 +105,7 @@ class FV
         name = word.get_name
         if name
           if row.include?(name) &&
-            !row.index(/['"].*?\b#{name}\b.*?['"]/) &&
+            !row.index(/['"].*?#{name}.*?['"]/) &&  # /['"].*?\b#{name}\b.*?['"]/
             !row.include?(word.to_s)
             word.childs.append Word.new(name, row, i)
             break
