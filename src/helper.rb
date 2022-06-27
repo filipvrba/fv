@@ -4,11 +4,15 @@ def p_header(name)
 end
 
 def p_dev( fv, is_dev = false )
-  if not is_dev
+  if is_dev < 0
     return
   end
 
   p_header("Python")
   puts fv.data
   p_header("App")
+end
+
+def test
+  
 end

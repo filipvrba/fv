@@ -23,6 +23,8 @@ def get_data file
   return data
 end
 
+test()
+
 fv = FV.new get_data get_file
 fv.find_words()
 

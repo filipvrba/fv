@@ -1,4 +1,4 @@
-@options = { is_dev: false }
+@options = { is_dev: -1 }
 
 OptionParser.parse do |parser|
   parser.banner( "Usage: fv [options] [program file]\n\nOptions:" )
@@ -10,7 +10,12 @@ OptionParser.parse do |parser|
     puts "Version is 1.0.0"
     exit
   end
-  parser.on( "-d", "--dev", "Show all development an messages." ) do
-    @options[:is_dev] = true
+  parser.on( "-d ID", "--dev ID", "Show all development an messages." ) do |id|
+    is_int = id.to_i.to_s == id
+    if is_int
+      @options[:is_dev] = id
+    else
+      @options[:is_dev] = 0
+    end
   end
 end
