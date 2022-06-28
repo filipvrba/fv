@@ -44,8 +44,10 @@ class Manipulation
   end
 
   def self.d_end(row, row_top)
-    if row_top.include?( FV::WORDS[:d] ) ||
-        row_top.include?( FV::WORDS[:c] )
+    words = [ FV::WORDS[:d], FV::WORDS[:c], FV::CONTROLS[:i],
+              FV::CONTROLS[:e], FV::CONTROLS[:ei] ]
+
+    if !words.select { |w| row_top.include?( w ) }.empty?
       row.sub( FV::WORDS[:e], "".ljust(2) + Python::WORDS[:p] )
     else
       row.sub( FV::WORDS[:e], "" )

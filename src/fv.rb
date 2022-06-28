@@ -1,8 +1,9 @@
 require_relative "python"
 require_relative "manipulation"
+require_relative "block"
 
 class FV < Manipulation
-  attr_reader :data, :vars, :words
+  attr_reader :blocks, :data, :vars, :words
 
   WORDS = {
     :d => "def",
@@ -18,14 +19,32 @@ class FV < Manipulation
     :t => "true"
   }
 
+  CONTROLS = {
+    :i => "if",
+    :e => "else",
+    :ei => "elif"
+  }
+
   METHODS = {
     :m => "main"
   }
 
-  def initialize(data)
+  BLOCKS = {
+    :d => "def",
+    :c => "class",
+    :i => "if",
+  }
+  BLOCKS_END = {
+    :e => "end"
+  }
+  DIMENSION = 2
+
+  def initialize(data, dimension)
     @data = data
     @words = Array.new
     @vars = Array.new
+    @blocks = Array.new
+    @dimension = dimension
   end
 
   def find_words()
@@ -55,6 +74,31 @@ class FV < Manipulation
         end
       end
     end
+  end
+
+  def self.find_word(row, word)
+    row.index( /#{word}[ \n]/ )
+  end
+
+  def find_blocks(data)
+    data.each_with_index do |row, i|
+      FV::BLOCKS.each do |key, value|
+        i_d = FV::find_word(row, value)
+        if i_d and i_d == @dimension
+          block = Block.new(value, row, [i, i_d])
+          block.parent = self
+          init_block(block)
+          break
+        end
+      end
+    end
+  end
+
+  def init_block(block)
+    block.set_rows(@data.drop(block.index))
+    block.init_child(@dimension)
+
+    @blocks.append(block)
   end
 
   def write_words(arr)

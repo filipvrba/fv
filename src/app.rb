@@ -25,12 +25,13 @@ end
 
 test()
 
-fv = FV.new get_data get_file
-fv.find_words()
+fv = FV.new(get_data( get_file() ), 0)
+fv.find_blocks(fv.data)
+p fv.blocks
 
-fv.write_words(fv.words)
-fv.write_vars(fv.vars)
-fv.add_main()
+# fv.write_words(fv.words)
+# fv.write_vars(fv.vars)
+# fv.add_main()
 
 p_dev( fv, @options[:is_dev])
 system("python -c << END '#{fv.data.join}' END")
