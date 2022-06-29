@@ -3,9 +3,15 @@ import json
 
 
 def generate_dics(arg):
-    obj = { "funcs": [] }
+    obj = { arg: [] }
 
-    exec(f"import {arg}")
+    try:
+        exec(f"import {arg}")
+    except Exception as e:
+        obj[arg].append({
+            "error": str(e)
+        })
+        return obj
 
     type_str = f"dir({arg})"
     dirs = eval(type_str)
@@ -14,7 +20,7 @@ def generate_dics(arg):
             funcs_str = f"{arg}.{var}"
             funcs = eval(funcs_str)
             typ = type( funcs )
-            obj["funcs"].append({
+            obj[arg].append({
                 "name": var,
                 "type": {
                     "name": typ.__name__,

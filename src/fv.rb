@@ -3,13 +3,11 @@ require_relative "manipulation"
 require_relative "block"
 
 class FV < Manipulation
-  attr_reader :blocks, :data, :vars, :words
+  attr_accessor :parent
+  attr_reader :blocks, :data, :vars, :words, :dimension
 
   WORDS = {
-    :d => "def",
-    :c => "class",
     :p => "p",
-    :e => "end",
     :i => "<"
   }
 
@@ -39,6 +37,10 @@ class FV < Manipulation
   }
   DIMENSION = 2
 
+  def self.find_word(row, word)
+    row.index( /#{word}[ \n]/ )
+  end
+
   def initialize(data, dimension)
     @data = data
     @words = Array.new
@@ -47,38 +49,34 @@ class FV < Manipulation
     @dimension = dimension
   end
 
-  def find_words()
-    @data.each_with_index do |row, i|
-      FV::WORDS.each do |key, value|
-        if row.index( /#{value}[ \n]/ )  # /#{value}[ \n]/
-          @words.append Word.new(value, row, i)
-          break
-        end
-      end
+  # def find_words()
+  #   @data.each_with_index do |row, i|
+  #     FV::WORDS.each do |key, value|
+  #       if row.index( /#{value}[ \n]/ )  # /#{value}[ \n]/
+  #         @words.append Word.new(value, row, i)
+  #         break
+  #       end
+  #     end
   
-      @words.each do |word|
-        name = word.get_name
-        if name
-          if row.include?(name) &&
-            !row.index(/['"].*?#{name}.*?['"]/) &&  # /['"].*?\b#{name}\b.*?['"]/
-            !row.include?(word.to_s)
-            word.childs.append Word.new(name, row, i)
-            break
-          end
-        end
-      end
+  #     @words.each do |word|
+  #       name = word.get_name
+  #       if name
+  #         if row.include?(name) &&
+  #           !row.index(/['"].*?#{name}.*?['"]/) &&  # /['"].*?\b#{name}\b.*?['"]/
+  #           !row.include?(word.to_s)
+  #           word.childs.append Word.new(name, row, i)
+  #           break
+  #         end
+  #       end
+  #     end
 
-      FV::VARIABLES.each do |key, value|
-        if row.include?( value )
-          @vars.append Word.new(value, row, i)
-        end
-      end
-    end
-  end
-
-  def self.find_word(row, word)
-    row.index( /#{word}[ \n]/ )
-  end
+  #     FV::VARIABLES.each do |key, value|
+  #       if row.include?( value )
+  #         @vars.append Word.new(value, row, i)
+  #       end
+  #     end
+  #   end
+  # end
 
   def find_blocks(data)
     data.each_with_index do |row, i|
@@ -99,6 +97,36 @@ class FV < Manipulation
     block.init_child(@dimension)
 
     @blocks.append(block)
+  end
+
+  def change_blocks(blocks)
+    blocks.each do |block|
+      if block.child
+        change_blocks( block.child.blocks )
+      end
+
+      row = block.rows[0]
+      write_row = -> (value) { block.rows[0] = value }
+
+      case block.to_s
+      when FV::BLOCKS[:d]
+        write_row.(Manipulation::d_p_def(block.parent.parent.to_s, row, block.get_name))
+      when FV::BLOCKS[:c]
+        write_row.(Manipulation::d_class(row, block.get_name))
+      end
+    end
+  end
+
+  def write_blocks(blocks)
+    blocks.each do |block|
+      block.rows.each_with_index do |row, i|
+        @data[ block.get_index + i ] = row
+      end
+
+      if block.child
+        write_blocks( block.child.blocks )
+      end
+    end
   end
 
   def write_words(arr)

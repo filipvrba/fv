@@ -27,7 +27,8 @@ test()
 
 fv = FV.new(get_data( get_file() ), 0)
 fv.find_blocks(fv.data)
-p fv.blocks
+fv.change_blocks(fv.blocks)
+fv.write_blocks(fv.blocks)
 
 # fv.write_words(fv.words)
 # fv.write_vars(fv.vars)

@@ -1,14 +1,24 @@
+require 'securerandom'
 require_relative "word"
 
 class Block < Word
   attr_accessor :parent
-  attr_reader :index_dimension, :rows
+  attr_reader :index_dimension, :rows, :child, :uuid
 
   def initialize(word, row, indexs)
     super(word, row, indexs[0])
+    @uuid = SecureRandom.uuid
     @index_dimension = indexs[1]
     @rows = []
     @child = nil
+  end
+
+  def get_index()
+    if parent && parent.parent
+      i_p = parent.parent.index + @index
+    else
+      @index
+    end
   end
 
   def set_rows(data)
@@ -30,6 +40,7 @@ class Block < Word
 
   def init_child(dimension)
     @child = FV.new(@rows, dimension + FV::DIMENSION)
+    @child.parent = self
     @child.find_blocks( @child.data )
 
     if @child.blocks.empty?

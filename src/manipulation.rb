@@ -5,6 +5,15 @@ class Manipulation
     self.d_special_def( row, name )
   end
 
+  def self.d_p_def(parent, row, name)
+    if parent && parent == FV::BLOCKS[:c]
+      comma = row.index( /(#{name}){1}( |:)?(:)/ ) ? "" : ","
+      row = row.sub( name, "#{name} self#{comma}" )
+    end
+
+    self.d_def( row, name )
+  end
+
   def self.d_special_def(row, name)
     is_special = name.index( /^__/ ) && name.each_char
       .with_object(Hash.new(0)) {|c, m| m[c]+=1}["_"] == 2
