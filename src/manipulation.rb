@@ -1,4 +1,3 @@
-
 class Manipulation
   def self.d_def(row, name)
     row = self.add_brackets( row, name, Python::WORDS[:e] )
@@ -54,7 +53,7 @@ class Manipulation
       r_u_e = !FV::CONTROLS.select { |k, v| r_u.include?( v ) }.empty?
       r_d_e = !FV::CONTROLS.select { |k, v| r_d.include?( v ) }.empty?
       if r_u_e and r_d_e
-        row += "".ljust(2) + Python::WORDS[:p]
+        row += "".ljust(2) + Python::WORDS[:p] + "\n"
       end
     end
 

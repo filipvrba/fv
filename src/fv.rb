@@ -157,17 +157,19 @@ class FV < Manipulation
     end
   end
 
+  def self.blocks_end_noempty_row(rows)
+    rows.each do |r|
+      if !r.strip.empty? and !r.index(/#{FV::BLOCKS_END[:e]}/)
+        return r
+      end
+    end
+    return nil
+  end
+
   def change_blocks_end(block, &callback)
     index = block.rows.length - 1
     row_d = block.rows[index]
-    row_u = block.rows[index - 1]
-
-    block.rows.each_with_index do |r, i|
-      if !r.strip.empty?
-        row_u = block.rows[i]
-        break
-      end
-    end
+    row_u = FV::blocks_end_noempty_row(block.rows.reverse)
 
     if row_u
       callback.call Manipulation.d_end( row_d, row_u ), index
