@@ -41,11 +41,8 @@ class Block < Word
   def init_child(dimension)
     @child = FV.new(@rows, dimension + FV::DIMENSION)
     @child.parent = self
-    @child.find_blocks( @child.data )
-    @child.find_variables( @child.data )
-
-    # if @child.blocks.empty?
-    #   @child = nil
-    # end
+    
+    @child.blocks.send( :find_blocks, @child.data )
+    @child.variables.send( :find_variables, @child.data )
   end
 end

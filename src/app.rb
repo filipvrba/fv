@@ -26,11 +26,11 @@ end
 test()
 
 fv = FV.new(get_data( get_file() ), 0)
-fv.find_blocks(fv.data)
+fv.blocks.find_blocks(fv.data)
 
-fv.change_blocks(fv.blocks)
+fv.blocks.change_blocks(fv.blocks.get)
 
-fv.write_blocks(fv.blocks)
+fv.blocks.write_blocks(fv.blocks.get)
 
 # fv.write_words(fv.words)
 # fv.write_vars(fv.vars)
