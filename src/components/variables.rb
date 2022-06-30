@@ -1,4 +1,7 @@
 require_relative "component"
+require_relative "../variable"
+require_relative "../manipulation"
+require_relative "../fv"
 
 module Components
   class Variables < Component
@@ -9,18 +12,36 @@ module Components
       row.index(/{.*#{var}.*}/)
     end
 
-    def change_variables(block, &callback)
-      block.child.variables.get.each do |var|
-        i = var.index
-        row = block.rows[i]
+    # def change_variables(block, &callback)
+    #   block.child.variables.get.each do |var|
+    #     i = var.index
+    #     row = block.rows[i]
   
+        # case var.to_s
+        # when FV::VARIABLES[:n]
+        #   callback.call Manipulation::d_nil(row), i
+        # when FV::VARIABLES[:t]
+        #   callback.call Manipulation::d_true(row), i
+        # when FV::VARIABLES[:f]
+        #   callback.call Manipulation::d_false(row), i
+        # end
+    #   end
+    # end
+    
+    def change_variables(variables)
+      variables.each do |var|
+        i = var.index
+        row = var.row
+
+        write_row = -> (value) { var.row = value }
+
         case var.to_s
         when FV::VARIABLES[:n]
-          callback.call Manipulation::d_nil(row), i
+          write_row.( Manipulation::d_nil(row))
         when FV::VARIABLES[:t]
-          callback.call Manipulation::d_true(row), i
+          write_row.( Manipulation::d_true(row))
         when FV::VARIABLES[:f]
-          callback.call Manipulation::d_false(row), i
+          write_row.( Manipulation::d_false(row))
         end
       end
     end
@@ -31,6 +52,12 @@ module Components
         variable.parent = @parent
   
         @get.append(variable)
+      end
+    end
+
+    def write_variables(variables)
+      variables.each do |variable|
+        parent.write_data(variable.index, variable.row)
       end
     end
   end

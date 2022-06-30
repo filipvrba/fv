@@ -1,3 +1,5 @@
+require_relative "python"
+
 class Manipulation
   def self.d_def(row, name)
     row = self.add_brackets( row, name, Python::WORDS[:e] )
@@ -107,5 +109,9 @@ class Manipulation
     row[s_i] = "(#{row[s_i]}"
     row = row.sub(value, ")#{value}")
     return row
+  end
+
+  def self.overwrite( str, str_two )
+    str.tap{ |r| r[0, str_two.length] = str_two[0, r.length]}
   end
 end

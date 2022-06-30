@@ -1,6 +1,3 @@
-require_relative "python"
-require_relative "manipulation"
-require_relative "variable"
 require_relative "components/blocks"
 require_relative "components/variables"
 
@@ -46,7 +43,6 @@ class FV < Manipulation
     @data = data
     @dimension = dimension
 
-    #@words = Array.new
     @variables = Components::Variables.new(self)
     @blocks = Components::Blocks.new(self)
   end
@@ -83,5 +79,9 @@ class FV < Manipulation
         break
       end
     end
+  end
+
+  def write_data(index, row)
+    @data[index] = Manipulation::overwrite(@data[index], row)
   end
 end

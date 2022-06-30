@@ -49,9 +49,9 @@ module Components
           end
         end
   
-        parent.variables.send(:change_variables, block) do |r, i|
-          write_row.(r, i)
-        end
+        # parent.variables.send(:change_variables, block) do |r, i|
+        #   write_row.(r, i)
+        # end
   
         change_blocks_end(block) do |r, i|
           write_row.(r, i)
