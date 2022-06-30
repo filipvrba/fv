@@ -1,13 +1,13 @@
 require_relative "python"
 require_relative "manipulation"
 require_relative "block"
+require_relative "variable"
 
 class FV < Manipulation
   attr_accessor :parent
   attr_reader :blocks, :data, :vars, :words, :dimension
 
   WORDS = {
-    :p => "p",
     :i => "<"
   }
 
@@ -39,6 +39,12 @@ class FV < Manipulation
 
   def self.find_word(row, word)
     row.index( /#{word}[ \n]/ )
+  end
+
+  def self.find_var(row, var)
+    return row.include?(var) &&
+    !row.index(/['"].*?#{var}.*?['"]/) || # /['"].*?\b#{name}\b.*?['"]/
+    row.index(/{.*#{var}.*}/)
   end
 
   def initialize(data, dimension)
@@ -78,17 +84,39 @@ class FV < Manipulation
   #   end
   # end
 
-  def find_blocks(data)
+  def find_method(data, keys, has_d = true, &callback)
     data.each_with_index do |row, i|
-      FV::BLOCKS.each do |key, value|
-        i_d = FV::find_word(row, value)
-        if i_d and i_d == @dimension
-          block = Block.new(value, row, [i, i_d])
-          block.parent = self
-          init_block(block)
-          break
+      keys.each do |key, value|
+        if has_d
+          i_d = FV::find_word(row, value)
+          if i_d and i_d == @dimension
+            callback.call(value, row, [i, i_d])
+            break
+          end
+        else
+          if FV::find_var(row, value)
+            callback.call(value, row, i)
+            break
+          end
         end
       end
+    end
+  end
+
+  def find_blocks(data)
+    find_method(data, FV::BLOCKS) do |v, r, ids|
+      block = Block.new(v, r, ids)
+      block.parent = self
+      init_block(block)
+    end
+  end
+
+  def find_variables(data)
+    find_method(data, FV::VARIABLES, false) do |v, r, i|
+      variable = Variable.new(v, r, i)
+      variable.parent = self
+
+      @vars.append(variable)
     end
   end
 
@@ -106,13 +134,58 @@ class FV < Manipulation
       end
 
       row = block.rows[0]
-      write_row = -> (value) { block.rows[0] = value }
+      write_row = -> (value, index = 0) { block.rows[index] = value }
 
       case block.to_s
       when FV::BLOCKS[:d]
         write_row.(Manipulation::d_p_def(block.parent.parent.to_s, row, block.get_name))
       when FV::BLOCKS[:c]
         write_row.(Manipulation::d_class(row, block.get_name))
+      when FV::BLOCKS[:i]
+        block.rows.each_with_index do |r, i|
+          write_row.(Manipulation::d_if(block.rows, i), i)
+        end
+      end
+
+      change_variables(block) do |r, i|
+        write_row.(r, i)
+      end
+
+      change_blocks_end(block) do |r, i|
+        write_row.(r, i)
+      end
+    end
+  end
+
+  def change_blocks_end(block, &callback)
+    index = block.rows.length - 1
+    row_d = block.rows[index]
+    row_u = block.rows[index - 1]
+
+    block.rows.each_with_index do |r, i|
+      if !r.strip.empty?
+        row_u = block.rows[i]
+        break
+      end
+    end
+
+    if row_u
+      callback.call Manipulation.d_end( row_d, row_u ), index
+    end
+  end
+
+  def change_variables(block, &callback)
+    block.child.vars.each do |var|
+      i = var.index
+      row = block.rows[i]
+
+      case var.to_s
+      when FV::VARIABLES[:n]
+        callback.call Manipulation::d_nil(row), i
+      when FV::VARIABLES[:t]
+        callback.call Manipulation::d_true(row), i
+      when FV::VARIABLES[:f]
+        callback.call Manipulation::d_false(row), i
       end
     end
   end

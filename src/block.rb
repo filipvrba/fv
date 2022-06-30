@@ -42,9 +42,10 @@ class Block < Word
     @child = FV.new(@rows, dimension + FV::DIMENSION)
     @child.parent = self
     @child.find_blocks( @child.data )
+    @child.find_variables( @child.data )
 
-    if @child.blocks.empty?
-      @child = nil
-    end
+    # if @child.blocks.empty?
+    #   @child = nil
+    # end
   end
 end

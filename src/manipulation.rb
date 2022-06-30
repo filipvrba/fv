@@ -45,6 +45,22 @@ class Manipulation
     row
   end
 
+  def self.d_if(rows, index)
+    r_u = rows[index]
+    r_d = rows[index + 1]
+    row = r_u
+
+    if r_d
+      r_u_e = !FV::CONTROLS.select { |k, v| r_u.include?( v ) }.empty?
+      r_d_e = !FV::CONTROLS.select { |k, v| r_d.include?( v ) }.empty?
+      if r_u_e and r_d_e
+        row += "".ljust(2) + Python::WORDS[:p]
+      end
+    end
+
+    return row
+  end
+
   def self.d_p(row)
     sym = FV::WORDS[:p]
     row = self.add_brackets( row, sym, ignore: true )
@@ -53,13 +69,13 @@ class Manipulation
   end
 
   def self.d_end(row, row_top)
-    words = [ FV::WORDS[:d], FV::WORDS[:c], FV::CONTROLS[:i],
+    words = [ FV::BLOCKS[:d], FV::BLOCKS[:c], FV::CONTROLS[:i],
               FV::CONTROLS[:e], FV::CONTROLS[:ei] ]
 
     if !words.select { |w| row_top.include?( w ) }.empty?
-      row.sub( FV::WORDS[:e], "".ljust(2) + Python::WORDS[:p] )
+      row.sub( FV::BLOCKS_END[:e], "".ljust(2) + Python::WORDS[:p] )
     else
-      row.sub( FV::WORDS[:e], "" )
+      row.sub( FV::BLOCKS_END[:e], "" )
     end
   end
 
