@@ -1,3 +1,5 @@
+require_relative "module"
+
 def p_header(name)
   identation = 10
   puts "=" * identation + name + "=" * identation 
@@ -14,5 +16,5 @@ def p_dev( fv, is_dev = false )
 end
 
 def test
-  
+
 end

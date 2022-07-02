@@ -29,9 +29,11 @@ fv = FV.new(get_data( get_file() ), 0)
 
 fv.blocks.find_blocks(fv.data)
 fv.variables.find_variables(fv.data)
+# fv.functions.find_functions(fv.data)
 
 fv.blocks.change_blocks(fv.blocks.get)
 fv.variables.change_variables(fv.variables.get)
+
 
 fv.blocks.write_blocks(fv.blocks.get)
 fv.variables.write_variables(fv.variables.get)

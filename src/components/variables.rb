@@ -11,22 +11,6 @@ module Components
       !row.index(/['"].*?#{var}.*?['"]/) || # /['"].*?\b#{name}\b.*?['"]/
       row.index(/{.*#{var}.*}/)
     end
-
-    # def change_variables(block, &callback)
-    #   block.child.variables.get.each do |var|
-    #     i = var.index
-    #     row = block.rows[i]
-  
-        # case var.to_s
-        # when FV::VARIABLES[:n]
-        #   callback.call Manipulation::d_nil(row), i
-        # when FV::VARIABLES[:t]
-        #   callback.call Manipulation::d_true(row), i
-        # when FV::VARIABLES[:f]
-        #   callback.call Manipulation::d_false(row), i
-        # end
-    #   end
-    # end
     
     def change_variables(variables)
       variables.each do |var|

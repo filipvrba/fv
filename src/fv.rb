@@ -1,9 +1,10 @@
 require_relative "components/blocks"
 require_relative "components/variables"
+require_relative "components/functions"
 
 class FV < Manipulation
   attr_accessor :parent
-  attr_reader :blocks, :data, :variables, :words, :dimension
+  attr_reader :blocks, :data, :variables, :words, :dimension, :functions
 
   WORDS = {
     :i => "<"
@@ -43,6 +44,7 @@ class FV < Manipulation
     @data = data
     @dimension = dimension
 
+    @functions = Components::Functions.new(self)
     @variables = Components::Variables.new(self)
     @blocks = Components::Blocks.new(self)
   end
@@ -65,11 +67,6 @@ class FV < Manipulation
       end
     end
   end
-
-#     else
-#         Other for method
-#         write_row.(Manipulation::d_other(row, word.to_s))
-#     end
   
   def add_main()
     name = FV::METHODS[:m].concat("():")

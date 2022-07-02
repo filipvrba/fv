@@ -21,6 +21,11 @@ class Block < Word
     end
   end
 
+  def get_block_apply_indexs
+    i_start = get_index()
+    return i_start..(i_start + @rows.length)
+  end
+
   def set_rows(data)
     data_loop(data) do |row|
       @rows << row
@@ -44,5 +49,6 @@ class Block < Word
     
     @child.blocks.send( :find_blocks, @child.data )
     @child.variables.send( :find_variables, @child.data )
+    @child.functions.send( :find_functions, @child.data )
   end
 end

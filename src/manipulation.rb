@@ -112,6 +112,10 @@ class Manipulation
   end
 
   def self.overwrite( str, str_two )
-    str.tap{ |r| r[0, str_two.length] = str_two[0, r.length]}
+    s = str.tap{ |r| r[0, str_two.length] = str_two[0, r.length]}
+    unless s.include?("\n")
+      s += "\n"
+    end
+    s
   end
 end

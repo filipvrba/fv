@@ -19,6 +19,11 @@ module Components
       block.init_child(parent.dimension)
   
       @get.append(block)
+
+      if block.to_s == FV::BLOCKS[:d] or block.to_s == FV::BLOCKS[:c]
+        n = block.get_name
+        @parent.functions.send(:add_names, {"#{block.to_s}.#{n}" => n})
+      end
     end
 
     def find_blocks(data)
@@ -48,10 +53,6 @@ module Components
             write_row.(Manipulation::d_if(block.rows, i), i)
           end
         end
-  
-        # parent.variables.send(:change_variables, block) do |r, i|
-        #   write_row.(r, i)
-        # end
   
         change_blocks_end(block) do |r, i|
           write_row.(r, i)
