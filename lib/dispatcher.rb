@@ -65,7 +65,10 @@ module FV
       if signal_array != nil
         signal[:target] = self
 
-        signal_array.slice(0).call(signal)
+        array = signal_array  # signal_array.slice(0)
+        array.each do |sig_prog|
+          sig_prog.call(signal)
+        end
 
         signal[:target] = nil
       end

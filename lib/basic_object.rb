@@ -68,7 +68,6 @@ module FV
 
     def free_signals
       if has_signal(FV::Dispatcher::ADDED, @@addedListener)
-        puts "disconnect"
         disconnect(FV::Dispatcher::ADDED, @@addedListener)
       end
     end
