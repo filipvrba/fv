@@ -6,10 +6,10 @@ Gem::Specification.new do |s|
   s.authors = ["Filip Vrba"]
   s.email = "filipvrba@pm.me"
   s.files = [
-    "src/array.rb",
-    "src/basic_object.rb",
-    "src/dispatcher.rb",
-    "src/scene.rb"
+    "lib/array.rb",
+    "lib/basic_object.rb",
+    "lib/dispatcher.rb",
+    "lib/scene.rb"
   ]
   s.homepage = "https://github.com/filipvrba/fv.git"
   s.license = "Apache-2.0"
