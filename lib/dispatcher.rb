@@ -50,6 +50,7 @@ module FV
       end
 
       listeners = @signals
+
       return listeners[type] != nil &&
         listeners[type].index(listener) != nil
     end

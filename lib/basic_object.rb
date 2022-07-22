@@ -7,7 +7,7 @@ module FV
     attr_writer :id, :parent
 
     def initialize
-      @@addedListener = -> (signal) { added_signal(signal[:object]) }
+      @@added_listener = -> (signal) { added_signal(signal[:object]) }
 
       @id = nil
       @parent = nil
@@ -32,7 +32,6 @@ module FV
         end
 
         @children.append(object)
-
         add_signals(object)
       else
         puts "#{self.class.name}.add: object not an instance of #{self.class.name}"
@@ -44,6 +43,7 @@ module FV
     def remove(object)
       index = @children.index(object)
       if index
+        object.id = nil
         object.parent = nil
         @children.splice(index, 1)
       end
@@ -54,22 +54,22 @@ module FV
     def free
       if @children.length > 0
         @children.each do |child|
-          # Free next children
           child.free
-          child.free_signals
-
-          self.remove child
+        end
+      else
+        if @parent
+          free_signals()
+          @parent.remove(self)
         end
       end
 
-      self.free_signals
-      @parent.remove self
+      if @parent
+        @parent.free
+      end
     end
 
     def free_signals
-      if has_signal(FV::Dispatcher::ADDED, @@addedListener)
-        disconnect(FV::Dispatcher::ADDED, @@addedListener)
-      end
+      @signals = nil
     end
 
     def get_scene(is_root = false)
@@ -110,7 +110,7 @@ module FV
     def add_signals(object)
       # Added
       if defined?(object.ready)
-        object.connect(FV::Dispatcher::ADDED, @@addedListener)
+        object.connect(FV::Dispatcher::ADDED, @@added_listener)
         object.emit_signal({ type: FV::Dispatcher::ADDED, object: object })
       end
     end
